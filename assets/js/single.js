@@ -1,3 +1,4 @@
+var repoNameEl = document.querySelector("#repo-name");
 var limitWarningEl = document.querySelector("#limit-warning");
 var issueContainerEl = document.querySelector("#issues-container");
 
@@ -24,6 +25,13 @@ var getRepoIssues = function (repo) {
 
 };
 
+var getRepoName = function() {
+  var queryString = document.location.search;
+  var repoName = queryString.split("=")[1];
+  getRepoIssues(repoName);
+  repoNameEl.textContent = repoName;
+}
+
 var displayWarning = function(repo) {
   // add text to warning container
   limitWarningEl.textContent = "To see more than 30 issues, visit ";
@@ -39,10 +47,12 @@ var displayWarning = function(repo) {
 
 var displayIssues = function (issues) {
 
-  if (issues.length === 0) {
-    issueContainerEl.textContent = "This repo has no open issues!";
-    return;
-  }
+  // if (issues.length === 0) {
+  //   issueContainerEl.textContent = "This repo has no open issues!";
+  //   return;
+  // }
+
+
   for (var i = 0; i < issues.length; i++) {
     // create a link element to take users to the issue on github
     var issueEl = document.createElement("a");
@@ -72,8 +82,9 @@ var displayIssues = function (issues) {
 
   }
 
+
 };
 
+getRepoName();
 
 
-getRepoIssues("facebook/react");
