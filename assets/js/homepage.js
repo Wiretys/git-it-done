@@ -1,3 +1,4 @@
+var languageButtonsEl = document.querySelector("#language-buttons")
 var repoContainerEl = document.querySelector("#repos-container");
 var repoSearchTerm = document.querySelector("#repo-search-term");
 var userFormEl = document.querySelector("#user-form");
@@ -5,7 +6,6 @@ var nameInputEl = document.querySelector("#username");
 var getUserRepos = function (user) {
   // format the github api url
   var apiUrl = "https://api.github.com/users/" + user + "/repos";
-
 
   // make a request to the url
   fetch(apiUrl)
@@ -57,8 +57,6 @@ var displayRepos = function (repos, searchTerm) {
     // format repo name
     var repoName = repos[i].owner.login + "/" + repos[i].name;
 
-
-
     // create a container for each repo
     var repoEl = document.createElement("a");
     repoEl.classList = "list-item flex-row justify-space-between align-center";
@@ -84,23 +82,44 @@ var displayRepos = function (repos, searchTerm) {
     } else {
       statusEl.innerHTML = "<i class='fas fa-check-square status-icon icon-success'></i>";
     }
-
     // append to container
     repoEl.appendChild(titleEl);
-
 
     // append container to the dom
     repoContainerEl.appendChild(repoEl);
 
     // append to container
     repoEl.appendChild(statusEl);
-
   }
-
 };
 
+var getFeaturedRepos = function (language) {
+  var apiUrl = "https://api.github.com/search/repositories?q=" + language + "+is:featured&sort=help-wanted-issues";
 
+  fetch(apiUrl).then(function (response) {
+    if (response.ok) {
+      response.json().then(function (data) {
+        displayRepos(data.items, language);
+      });
+    } else {
+      alert("Error: " + response.statusText);
+    }
+  });
+};
 
+var buttonClickHandler = function (event) {
+  event.preventDefault();
+  var language = event.target.getAttribute("data-language");
+  console.log(language);
+  if (language) {
+    getFeaturedRepos(language);
+
+    // clear old content
+    repoContainerEl.textContent = "";
+  }
+};
+
+languageButtonsEl.addEventListener("click", buttonClickHandler);
 userFormEl.addEventListener("submit", formSubmitHandler);
 
 
